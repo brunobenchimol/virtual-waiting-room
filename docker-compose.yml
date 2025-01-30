@@ -1,0 +1,53 @@
+version: '3.8'
+
+services:
+  nginx:
+    image: nginx:alpine
+    container_name: nginx_proxy
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/appsite:/etc/nginx/conf.d/appsite.conf:ro
+    depends_on:
+      - waiting_room
+      - main_app
+    networks:
+      - app-network
+
+  redis:
+    image: redis:latest
+    container_name: redis_server
+    ports:
+      - "6379:6379"
+    networks:
+      - app-network
+
+  waiting_room:
+    build:
+      context: .
+    container_name: waiting_room_service
+    environment:
+      - APP_ENTRY=app.js
+    ports:
+      - "3000:3000"
+    depends_on:
+      - redis
+    networks:
+      - app-network
+
+  main_app:
+    build:
+      context: .
+    container_name: main_app_service
+    environment:
+      - APP_ENTRY=app.js
+    ports:
+      - "4000:4000"
+    depends_on:
+      - waiting_room_service
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
