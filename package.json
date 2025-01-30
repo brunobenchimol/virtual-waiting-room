@@ -3,12 +3,24 @@
   "version": "1.0.0",
   "main": "VirtualWaitingRoom.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest",
+    "test:watch": "jest --watch"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": "",
+  "keywords": [
+    "virtual waiting room",
+    "queue management",
+    "real-time",
+    "express",
+    "redis",
+    "socket.io",
+    "websocket",
+    "user authentication",
+    "node.js",
+    "axios"
+  ],
+  "author": "Bruno Benchimol (https://github.com/brunobenchimol)",
+  "license": "Apache-2.0",
+  "description": "A virtual waiting room application using Express, Redis, and Socket.io for queue management.",
   "dependencies": {
     "axios": "^1.7.9",
     "body-parser": "^1.20.3",
@@ -16,5 +28,10 @@
     "express": "^4.21.2",
     "redis": "^4.7.0",
     "socket.io": "^4.8.1"
+  },
+  "devDependencies": {
+    "jest": "^29.0.0",
+    "supertest": "^6.2.3",
+    "redis-mock": "^0.54.0"
   }
 }
