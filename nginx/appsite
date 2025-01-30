@@ -1,0 +1,42 @@
+upstream application {
+    server 127.0.0.1:4000;
+}
+
+upstream waiting_room {
+    server 127.0.0.1:3000;
+}
+
+server {
+    listen 80;
+    server_name localhost;
+
+    # Enforce HTTPS (optional)
+    # return 301 https://$host$request_uri;
+
+    location / {
+        # Serve the waiting room if the application is full
+        location / {
+            proxy_pass http://waiting_room;
+            proxy_http_version 1.1;  # Ensure HTTP/1.1 is used for WebSockets
+            proxy_set_header Upgrade $http_upgrade;  # Handle WebSocket upgrade
+            proxy_set_header Connection 'upgrade';  # Handle WebSocket upgrade
+            proxy_set_header Host $host;  # Forward the host header
+            proxy_cache_bypass $http_upgrade;  # Avoid caching for WebSocket connections
+        }
+
+        # Serve the application when users are allowed in
+        location /app {
+            proxy_pass http://application;
+            proxy_http_version 1.1;  # Ensure HTTP/1.1 is used for WebSockets
+            proxy_set_header Upgrade $http_upgrade;  # Handle WebSocket upgrade
+            proxy_set_header Connection 'upgrade';  # Handle WebSocket upgrade
+            proxy_set_header Host $host;  # Forward the host header
+            proxy_cache_bypass $http_upgrade;  # Avoid caching for WebSocket connections
+        }
+
+        # Serve static files for the waiting room
+        location /static/ {
+            root /var/www/html/waiting_room;
+        }
+    }
+}
